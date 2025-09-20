@@ -135,3 +135,20 @@ function showDisplaySection(section) {
 
     section.style.display = 'flex'
 }
+
+
+// Theme Toggle Button
+
+const themeToggleBtn = document.querySelector('.theme-toggle');
+const themeIcon = themeToggleBtn.querySelector('span');
+
+themeToggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light');
+
+  // Switch icon
+  if (document.body.classList.contains('light')) {
+    themeIcon.textContent = "dark_mode";
+  } else {
+    themeIcon.textContent = "light_mode"; 
+  }
+});
