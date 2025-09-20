@@ -33,19 +33,25 @@ const dateElement = document.querySelector('.date');
 const sunriseTime = document.querySelector('.sunrise-time');
 const sunsetTime = document.querySelector('.sunset-time');
 
+// recents
+const recentContainer = document.querySelector('.recent-searches');
+const clearRecentsBtn = document.querySelector('.clear-recents');
+
+
 // ----------------- API KEY -----------------
 const apiKey = 'f560650afd2217ac192b06ff15eed118';
 
 // ----------------- STATE -----------------
-let isCelsius = true;        // Temperature unit
-let currentTemp = null;      // Current temp in °C
-let forecastTemps = [];      // Forecast temps in °C
-let cityTimezoneOffset = 0;  // <-- new: timezone offset in seconds
+let isCelsius = true;
+let currentTemp = null;
+let forecastTemps = [];
+let cityTimezoneOffset = 0;
 
 // ----------------- EVENT LISTENERS -----------------
 searchBtn.addEventListener('click', () => {
     if(cityInput.value.trim() !== '') {
         updateWeatherInfo(cityInput.value);
+        saveRecentSearch(cityInput.value);
         cityInput.value = '';
         cityInput.blur();
     }
@@ -54,6 +60,7 @@ searchBtn.addEventListener('click', () => {
 cityInput.addEventListener('keydown', (event) => {
     if(event.key === "Enter" && cityInput.value.trim() !== ''){
         updateWeatherInfo(cityInput.value);
+        saveRecentSearch(cityInput.value);
         cityInput.value = '';
         cityInput.blur();
     }
@@ -68,20 +75,20 @@ themeToggleBtn.addEventListener('click', () => {
 // Animated Unit Toggle
 unitSwitch.addEventListener('click', () => {
     isCelsius = !isCelsius;
-
-    // Animate slider
     toggleSlider.style.transform = isCelsius ? 'translateX(0%)' : 'translateX(100%)';
-
-    // Toggle active class
     unitC.classList.toggle('active', isCelsius);
     unitF.classList.toggle('active', !isCelsius);
-
-    // Update temperatures
     updateDisplayedUnits();
 });
 
-// ----------------- FUNCTIONS -----------------
+// Clear all recents
+clearRecentsBtn.addEventListener('click', () => {
+    localStorage.removeItem('recentSearches');
+    renderRecentSearches();
+});
 
+
+// ----------------- FUNCTIONS -----------------
 async function getFetchData(endPoint, city){
     const apiUrl = `https://api.openweathermap.org/data/2.5/${endPoint}?q=${city}&appid=${apiKey}&units=metric`;
     const response = await fetch(apiUrl);
@@ -124,11 +131,9 @@ async function updateWeatherInfo(city) {
         timezone 
     } = weatherData;
 
-    // Save state
     currentTemp = temp;
-    cityTimezoneOffset = timezone; // <-- save timezone offset
+    cityTimezoneOffset = timezone;
 
-    // Update main weather UI
     countryTxt.textContent = country;
     tempTxt.textContent = Math.round(isCelsius ? temp : toFahrenheit(temp)) + `°${isCelsius ? 'C' : 'F'}`;
     conditionTxt.textContent = main;
@@ -137,14 +142,10 @@ async function updateWeatherInfo(city) {
     weatherSummaryImg.src = `assets/weather/${getWeatherIcon(id)}`;
     currentDateTxt.textContent = getCurrentDate(timezone);
 
-    // Update sunrise / sunset
     sunriseTime.textContent = new Date((sunrise + timezone) * 1000).toUTCString().match(/\d{2}:\d{2}/)[0];
     sunsetTime.textContent = new Date((sunset + timezone) * 1000).toUTCString().match(/\d{2}:\d{2}/)[0];
 
-    // Update forecast
     await updateForecastsInfo(city);
-
-    // Show weather info section
     showDisplaySection(weatherInfoSection);
 }
 
@@ -185,7 +186,6 @@ function updateForecastsItems(weatherData){
 function showDisplaySection(section) {
     [weatherInfoSection, searchCitySection, notFoundSection, loadingSection]
         .forEach(sec => sec.style.display = 'none');
-
     section.style.display = 'flex';
 }
 
@@ -207,8 +207,7 @@ function updateDisplayedUnits() {
 
 // ----------------- CLOCK -----------------
 function updateClock() {
-    if (!cityTimezoneOffset) return; // no city selected yet
-
+    if (!cityTimezoneOffset) return;
     const nowUTC = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
     const localTime = new Date(nowUTC + cityTimezoneOffset * 1000);
 
@@ -220,3 +219,29 @@ function updateClock() {
     dateElement.textContent = localTime.toLocaleDateString('en-GB', options);
 }
 setInterval(updateClock, 1000);
+
+// ----------------- RECENT SEARCHES -----------------
+function saveRecentSearch(city) {
+    let recents = JSON.parse(localStorage.getItem('recentSearches')) || [];
+
+    recents = recents.filter(c => c.toLowerCase() !== city.toLowerCase());
+
+    recents.unshift(city);
+
+    localStorage.setItem('recentSearches', JSON.stringify(recents));
+    renderRecentSearches();
+}
+
+
+function renderRecentSearches() {
+    const recents = JSON.parse(localStorage.getItem('recentSearches')) || [];
+    recentContainer.innerHTML = '';
+    recents.forEach(city => {
+        const btn = document.createElement('button');
+        btn.textContent = city;
+        btn.className = 'recent-btn';
+        btn.addEventListener('click', () => updateWeatherInfo(city));
+        recentContainer.appendChild(btn);
+    });
+}
+renderRecentSearches();
