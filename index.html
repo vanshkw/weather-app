@@ -17,6 +17,13 @@
                 <span class="material-symbols-outlined">light_mode</span>
             </button>
         </div>
+        <div class="unit-toggle-container">
+            <div class="unit-toggle-switch">
+                <span class="unit-c active">°C</span>
+                <span class="unit-f">°F</span>
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
     </nav>
 
     <main class="main-container">
@@ -26,6 +33,11 @@
                     <span class="material-symbols-outlined">search</span>
                 </button>
         </header>
+
+        <section class="loading section-message" style="display: none;">
+            <div class="loader"></div>
+            <h2>Loading...</h2>
+        </section>
 
         <section class="weather-info" style="display: none;" >
             <div class="location-date-container">

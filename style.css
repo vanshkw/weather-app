@@ -220,9 +220,11 @@ body.dark .main-container {
  /* END Section: Message */
 
 /* Navbar */
-
 .navbar {
   position: absolute;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   top: 20px;
   right: 20px;
   z-index: 10;
@@ -232,6 +234,79 @@ body.dark .main-container {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 20px;
+}
+/* END Navbar */
+
+/* Loading Spinner */
+.loader {
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  border-top: 6px solid white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
 }
 
-/* END Navbar */
+body.light .loader {
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top: 6px solid black;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* End loading spinner */
+
+/* Unit toggle */
+.unit-toggle-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.unit-toggle-switch {
+  position: relative;
+  width: 90px;
+  height: 35px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  user-select: none;
+  transition: background 0.3s ease;
+}
+
+body.light .unit-toggle-switch {
+  background: rgba(0,0,0,0.1);
+}
+
+.unit-toggle-switch span {
+  width: 50%;
+  text-align: center;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.unit-toggle-switch .active {
+  color: black;
+}
+
+.toggle-slider {
+  position: absolute;
+  width: 50%;
+  height: 80%;
+  background:white;
+  border-radius: 50px;
+  top: 10%;
+  left: 0;
+  transition: transform 0.3s ease;
+  z-index: 1;  
+}
+/* END Unit toggle */
