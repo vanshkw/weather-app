@@ -137,7 +137,7 @@ function showDisplaySection(section) {
 }
 
 
-// 
+// Theme Toggle Button
 
 const themeToggleBtn = document.querySelector('.theme-toggle');
 const themeIcon = themeToggleBtn.querySelector('span');
@@ -147,8 +147,8 @@ themeToggleBtn.addEventListener('click', () => {
 
   // Switch icon
   if (document.body.classList.contains('light')) {
-    themeIcon.textContent = "dark_mode"; // 🌙
+    themeIcon.textContent = "dark_mode";
   } else {
-    themeIcon.textContent = "light_mode"; // ☀️
+    themeIcon.textContent = "light_mode"; 
   }
 });
