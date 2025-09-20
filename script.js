@@ -27,6 +27,12 @@ const toggleSlider = document.querySelector('.toggle-slider');
 const themeToggleBtn = document.querySelector('.theme-toggle');
 const themeIcon = themeToggleBtn.querySelector('span');
 
+// timings
+const timeElement = document.querySelector('.time');
+const dateElement = document.querySelector('.date');
+const sunriseTime = document.querySelector('.sunrise-time');
+const sunsetTime = document.querySelector('.sunset-time');
+
 // ----------------- API KEY -----------------
 const apiKey = 'f560650afd2217ac192b06ff15eed118';
 
@@ -34,6 +40,7 @@ const apiKey = 'f560650afd2217ac192b06ff15eed118';
 let isCelsius = true;        // Temperature unit
 let currentTemp = null;      // Current temp in °C
 let forecastTemps = [];      // Forecast temps in °C
+let cityTimezoneOffset = 0;  // <-- new: timezone offset in seconds
 
 // ----------------- EVENT LISTENERS -----------------
 searchBtn.addEventListener('click', () => {
@@ -87,14 +94,15 @@ function getWeatherIcon(id){
     if(id <= 531 ) return `rain.svg`;
     if(id <= 622 ) return `snow.svg`;
     if(id <= 781 ) return `atmosphere.svg`;
-    if(id <= 800 ) return `clear.svg`;
+    if(id === 800 ) return `clear.svg`;
     return `clouds.svg`;
 }
 
-function getCurrentDate() {
-    const currentDate = new Date();
+function getCurrentDate(offsetSeconds) {
+    const nowUTC = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+    const localTime = new Date(nowUTC + offsetSeconds * 1000);
     const option = { weekday: 'short', day: '2-digit', month: 'short' };
-    return currentDate.toLocaleDateString('en-GB', option);
+    return localTime.toLocaleDateString('en-GB', option);
 }
 
 async function updateWeatherInfo(city) {
@@ -107,20 +115,36 @@ async function updateWeatherInfo(city) {
         return;
     }
 
-    const { name: country, main: { temp, humidity }, weather: [{ id, main }], wind: { speed } } = weatherData;
+    const { 
+        name: country, 
+        main: { temp, humidity }, 
+        weather: [{ id, main }], 
+        wind: { speed }, 
+        sys: { sunrise, sunset }, 
+        timezone 
+    } = weatherData;
 
+    // Save state
     currentTemp = temp;
+    cityTimezoneOffset = timezone; // <-- save timezone offset
 
+    // Update main weather UI
     countryTxt.textContent = country;
     tempTxt.textContent = Math.round(isCelsius ? temp : toFahrenheit(temp)) + `°${isCelsius ? 'C' : 'F'}`;
     conditionTxt.textContent = main;
     humidityValueTxt.textContent = humidity + "%";
     windValueTxt.textContent = speed + " M/s";
     weatherSummaryImg.src = `assets/weather/${getWeatherIcon(id)}`;
-    currentDateTxt.textContent = getCurrentDate();
+    currentDateTxt.textContent = getCurrentDate(timezone);
 
+    // Update sunrise / sunset
+    sunriseTime.textContent = new Date((sunrise + timezone) * 1000).toUTCString().match(/\d{2}:\d{2}/)[0];
+    sunsetTime.textContent = new Date((sunset + timezone) * 1000).toUTCString().match(/\d{2}:\d{2}/)[0];
+
+    // Update forecast
     await updateForecastsInfo(city);
 
+    // Show weather info section
     showDisplaySection(weatherInfoSection);
 }
 
@@ -180,3 +204,19 @@ function updateDisplayedUnits() {
         item.textContent = Math.round(isCelsius ? temp : toFahrenheit(temp)) + `°${isCelsius ? 'C' : 'F'}`;
     });
 }
+
+// ----------------- CLOCK -----------------
+function updateClock() {
+    if (!cityTimezoneOffset) return; // no city selected yet
+
+    const nowUTC = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+    const localTime = new Date(nowUTC + cityTimezoneOffset * 1000);
+
+    const hours = localTime.getHours().toString().padStart(2, "0");
+    const minutes = localTime.getMinutes().toString().padStart(2, "0");
+    timeElement.textContent = `${hours}:${minutes}`;
+
+    const options = { weekday: 'long', day: '2-digit', month: 'short' };
+    dateElement.textContent = localTime.toLocaleDateString('en-GB', options);
+}
+setInterval(updateClock, 1000);

@@ -91,6 +91,7 @@ body.dark .main-container {
    border-radius: 14px;
    backdrop-filter: blur(100px);
    padding: 24px ;
+   margin-right: 30px;
  }
  /* Input container */
  .input-container{
@@ -310,3 +311,76 @@ body.light .unit-toggle-switch {
   z-index: 1;  
 }
 /* END Unit toggle */
+
+.right-container{
+   width: 350px;
+   height: 560px;
+   z-index:1;
+   border-radius: 14px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 20px;
+}
+/* Timings */
+.timings{
+   width: 350px;
+   height: 270px;
+   z-index:1;
+   background:linear-gradient(to top, rgb(0,0,0,0,15), rgb(255,255,255,0.1));
+   border-radius: 14px;
+   backdrop-filter: blur(100px);
+   padding: 24px ;
+}
+/* Clock styling */
+.clock {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.clock .time {
+  font-size: 60px;
+  font-weight: 800;
+}
+
+
+/* Sunrise / Sunset */
+.sun-info {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  padding-left: 35px;
+}
+
+.sunrise, .sunset {
+  display: flex;
+
+  align-items: center;
+  gap: 10px;
+}
+
+.sunrise h4, .sunset h4 {
+  font-weight: 600;
+}
+
+.sunrise-time, .sunset-time {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.sunrise span, .sunset span {
+  font-size: 30px;
+}
+
+/* END Timings */
+
+.recent{
+   width: 350px;
+   height: 270px;
+   z-index:1;
+   background:linear-gradient(to top, rgb(0,0,0,0,15), rgb(255,255,255,0.1));
+   border-radius: 14px;
+   backdrop-filter: blur(100px);
+   padding: 24px ;
+}
