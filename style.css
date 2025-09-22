@@ -449,3 +449,20 @@ body.light .recent-btn {
 .clear-recents:hover {
   color: #ff3b3b;
 }
+
+/* responsive design */
+@media (max-width:718px) {
+  body{
+    flex-direction: column;
+    gap:30px;
+  }
+  .main-container{
+    margin-top: 70px;
+    margin:0px;
+  }
+  .navbar{
+    margin-top: 30px;
+    gap:10px;
+  } 
+}
+/* END responsive design */
