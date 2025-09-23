@@ -5,4 +5,6 @@ It is a weather app based website.that shows the weather of the city that the us
 
 It has a theme toggle switch and a unit toogle switch.
 there is a recent section where the recent history of the user input is stored and can be clear whenever the user wants.
+It is hosted using netlify.
 
+the website link:- https://dapper-heliotrope-2c3375.netlify.app/
